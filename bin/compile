@@ -24,9 +24,6 @@ compile_lua_tgz="$compile_buildpack_dir/vendor/luajit-2.0.3.tar.gz"
 compile_nginx_tgz="$compile_buildpack_dir/vendor/nginx-$nginx_version.tar.gz"
 cd $build_dir
 
-status "Setting up lua"
-tar xzf $compile_lua_tgz
-
 # Alternate root location (default is root of project) for html/js/css
 # root: dist/
 if [[ "$(grep root: Staticfile)X" != "X" ]]; then
@@ -73,5 +70,8 @@ fi
 # [[ -f public/Procfile ]] && mv public/Procfile .
 # echo "-----> Ensuring manifest.yml & stackato.yml aren't available in public/"
 # rm -f public/{manifest,stackato}.yml
+
+status "Setting up lua"
+tar xzf $compile_lua_tgz
 
 cp $compile_buildpack_bin/boot.sh .
