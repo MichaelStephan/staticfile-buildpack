@@ -19,6 +19,7 @@ compile_buildpack_bin=$compile_buildpack_dir/bin
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
 
+compile_usr_tgz="$compile_buildpack_dir/vendor/usr.tar.gz"
 compile_nginx_crowd_lua_tgz="$compile_buildpack_dir/vendor/nginx-crowd-lua-0.0.1.tar.gz"
 compile_lua_tgz="$compile_buildpack_dir/vendor/luajit-2.0.3.tar.gz"
 compile_nginx_tgz="$compile_buildpack_dir/vendor/nginx-$nginx_version.tar.gz"
@@ -74,7 +75,11 @@ fi
 status "Setting up lua"
 tar xzf $compile_lua_tgz
 
+status "Setting up additional lua libraries"
+tar xzf $compile_usr_tgz
+
 status "Setting up nginx/ lua crowd authentication"
 tar xzf $compile_nginx_crowd_lua_tgz
 
+cp -r /app/usr/local/share/lua/5.1/* /app/lua/share/luajit-2.0.3/ 
 cp $compile_buildpack_bin/boot.sh .
