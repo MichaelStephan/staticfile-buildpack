@@ -1,9 +1,11 @@
 #!/bin/sh
 # http://jamie.curle.io/blog/compiling-nginx-ubuntu/
 # https://github.com/cloudfoundry-community/nginx-buildpack#building-the-nginx-package
+set -e
+set -x
 
 pcre_version=8.35
-nginx_version=1.7.4
+nginx_version=1.7.8
 
 sudo apt-get update
 sudo apt-get install -fy build-essential zlib1g-dev
@@ -11,15 +13,29 @@ sudo apt-get install -fy build-essential zlib1g-dev
 src=~/src
 build=/app/nginx
 target=/vagrant/vendor
+lua_build=/app/lua
 
 rm -rf $build && mkdir -p $build
 mkdir -p $src
 cd $src
 
+wget http://luajit.org/download/LuaJIT-2.0.3.tar.gz
+tar xzvf LuaJIT-2.0.3.tar.gz
+cd LuaJIT-2.0.3
+sudo make install PREFIX=$lua_build
+cd $src
+
+wget https://github.com/simpl/ngx_devel_kit/archive/v0.2.19.tar.gz
+tar xvzf v0.2.19.tar.gz
+cd $src
+
+wget https://github.com/openresty/lua-nginx-module/archive/v0.9.13.tar.gz
+tar xzvf v0.9.13.tar.gz
+cd $src
+
 wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$pcre_version.tar.gz
 tar -xzvf pcre-$pcre_version.tar.gz
 cd pcre-$pcre_version/
-
 ./configure --prefix=$build
 make
 sudo make install
@@ -30,7 +46,11 @@ wget http://nginx.org/download/nginx-$nginx_version.tar.gz
 tar -xvzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
 
-./configure --prefix=$build --with-http_ssl_module
+export LUAJIT_LIB=$lua_build/lib
+export LUAJIT_INC=$lua_build/include/luajit-2.0
+
+./configure --prefix=$build --with-pcre=$src/pcre-$pcre_version --with-http_ssl_module --add-module=$src/ngx_devel_kit-0.2.19 --add-module=$src/lua-nginx-module-0.9.13 
+ 
 make
 sudo make install
 
