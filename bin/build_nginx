@@ -65,4 +65,4 @@ sudo rm -rf /app/nginx/share
 mkdir -p $target
 cd /app 
 tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/
-tar -zcvpf $target/luajit-2.0.3.tar.gz $lua_build/ 
+tar -zcvpf $target/luajit-2.0.3.tar.gz lua/ 
