@@ -21,26 +21,26 @@ target=/vagrant/vendor
 lua_build=/app/lua
 nginx_crowd_lua_build=/app/nginx-crowd-lua
 
-rm -rf $build && mkdir -p $build
+rm -rf $build && sudo mkdir -p $build
 mkdir -p $src
 cd $src
 
-wget http://luajit.org/download/LuaJIT-$lua_jit_version.tar.gz
+wget -c http://luajit.org/download/LuaJIT-$lua_jit_version.tar.gz
 tar xzvf LuaJIT-$lua_jit_version.tar.gz
 cd LuaJIT-$lua_jit_version
 sudo make install PREFIX=$lua_build
 sudo make clean
 cd $src
 
-wget https://github.com/simpl/ngx_devel_kit/archive/v$ngx_devel_kit_version.tar.gz
+wget -c https://github.com/simpl/ngx_devel_kit/archive/v$ngx_devel_kit_version.tar.gz
 tar xvzf v$ngx_devel_kit_version.tar.gz
 cd $src
 
-wget https://github.com/openresty/lua-nginx-module/archive/v$lua_nginx_version.tar.gz
+wget -c https://github.com/openresty/lua-nginx-module/archive/v$lua_nginx_version.tar.gz
 tar xzvf v$lua_nginx_version.tar.gz
 cd $src
 
-wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$pcre_version.tar.gz
+wget -c ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$pcre_version.tar.gz
 tar -xzvf pcre-$pcre_version.tar.gz
 cd pcre-$pcre_version/
 ./configure --prefix=$build
@@ -49,7 +49,7 @@ sudo make install
 sudo ldconfig # this is important otherwise nginx will compile but fail to load
 
 cd $src
-wget http://nginx.org/download/nginx-$nginx_version.tar.gz
+wget -c http://nginx.org/download/nginx-$nginx_version.tar.gz
 tar -xvzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
 
@@ -59,6 +59,32 @@ export LUAJIT_INC=$lua_build/include/luajit-2.0
  
 make
 sudo make install
+
+sudo apt-get install lua5.1
+sudo apt-get install -fy luarocks
+sudo bash -c 'echo -e "module(\"luarocks.config\")\n\
+LUAROCKS_PREFIX=[[/usr]]\n\
+LUA_INCDIR=[[/usr/include/lua5.1]]\n\
+LUA_LIBDIR=[[/usr/local/lib]]\n\
+LUA_BINDIR=[[/usr/bin]]\n\
+LUAROCKS_SYSCONFIG=[[/etc/luarocks/config.lua]]\n\
+LUAROCKS_ROCKS_TREE=[[/app/usr/local/]]\n\
+LUAROCKS_UNAME_S=[[Linux]]\n\
+LUAROCKS_UNAME_M=[[x86_64]]\n\
+LUAROCKS_DOWNLOADER=[[wget]]\n\
+LUAROCKS_MD5CHECKER=[[md5sum]]" > /usr/share/lua/5.1/luarocks/config.lua' 
+
+
+sudo bash -c 'echo -e "rocks_servers = {
+   [[http://luarocks.org/repositories/rocks]]
+}
+rocks_trees = {
+   home..[[/.luarocks]],
+   [[/app/usr/local]]
+}" > /etc/luarocks/config.lua'
+
+sudo luarocks install luasec
+sudo luarocks install lua-spore
 
 # Remove extras (help, utilities etc)
 
@@ -70,7 +96,7 @@ sudo rm -rf /app/nginx/share
 cd $src
 rm -rf nginx-crowd-lua
 git clone https://github.com/MichaelStephan/nginx-crowd-lua
-mv nginx-crowd-lua $nginx_crowd_lua_build
+sudo mv nginx-crowd-lua $nginx_crowd_lua_build
 
 # Archive it all up
 mkdir -p $target
@@ -78,3 +104,4 @@ cd /app
 tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/
 tar -zcvpf $target/luajit-$lua_jit_version.tar.gz lua/
 tar -zcvpf $target/nginx-crowd-lua-$nginx_crowd_lua_version.tar.gz nginx-crowd-lua/
+tar -zcvpf $target/usr.tar.gz usr/
