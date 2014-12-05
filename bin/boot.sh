@@ -26,10 +26,11 @@ erb $APP_ROOT/nginx/conf/orig.conf > $APP_ROOT/nginx/conf/nginx.conf
 
 # ------------------------------------------------------------------------------------------------
 
-
-
 touch $APP_ROOT/nginx/logs/access.log
 touch $APP_ROOT/nginx/logs/error.log
+
+echo "---------------" 
+echo $VCAP_APP_PORT
 
 sed -i 's#80#'"${VCAP_APP_PORT}"'#' $APP_ROOT/nginx/conf/nginx.conf
 
