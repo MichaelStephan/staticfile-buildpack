@@ -25,13 +25,6 @@ rm -rf $build && sudo mkdir -p $build
 mkdir -p $src
 cd $src
 
-#wget -c http://www.lua.org/ftp/lua-5.2.3.tar.gz
-#tar zxf lua-5.2.3.tar.gz
-#cd lua-5.2.3
-#make linux
-#sudo make install INSTALL_TOP=/app/lua
-#cd $src
-
 wget -c http://luajit.org/download/LuaJIT-$lua_jit_version.tar.gz
 tar xzvf LuaJIT-$lua_jit_version.tar.gz
 cd LuaJIT-$lua_jit_version
@@ -74,8 +67,6 @@ wget -c http://nginx.org/download/nginx-$nginx_version.tar.gz
 tar -xvzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
 
-#export LUA_LIB=$lua_build/lib
-#export LUA_INC=$lua_build/include
 export LUAJIT_LIB=$lua_build/lib
 export LUAJIT_INC=$lua_build/include
 ./configure --prefix=$build --with-pcre=$src/pcre-$pcre_version --with-http_ssl_module --add-module=$src/ngx_devel_kit-$ngx_devel_kit_version --add-module=$src/lua-nginx-module-$lua_nginx_version 
@@ -83,15 +74,7 @@ export LUAJIT_INC=$lua_build/include
 make
 sudo make install
 
-#cd $src
-#wget -c http://luarocks.org/releases/luarocks-2.2.0.tar.gz
-#tar xvzf luarocks-2.2.0.tar.gz
-#cd luarocks-2.2.0
-#./configure --prefix=/app/luarocks --sysconfdir=/app/luarocks --force-config --with-lua=$lua_build/bin/lua --with-lua-include=$lua_build/include
-#sudo make build && sudo make install
-
 #sudo apt-get install lua5.1
-#sudo apt-get install -fy luarocks
 #sudo bash -c 'echo -e "module(\"luarocks.config\")\n\
 #LUAROCKS_PREFIX=[[/usr]]\n\
 #LUA_INCDIR=[[/usr/include/lua5.1]]\n\
@@ -133,4 +116,3 @@ cd /app
 tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/
 tar -zcvpf $target/lua.tar.gz lua/
 tar -zcvpf $target/nginx-crowd-lua-$nginx_crowd_lua_version.tar.gz nginx-crowd-lua/
-#tar -zcvpf $target/luarocks.tar.gz luarocks/
