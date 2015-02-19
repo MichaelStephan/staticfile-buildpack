@@ -5,7 +5,7 @@ set -e
 set -x
 
 pcre_version=8.35
-nginx_version=1.7.8
+nginx_version=1.7.10
 lua_jit_version=2.0.3
 ngx_devel_kit_version=0.2.19
 lua_nginx_version=0.9.13
@@ -14,6 +14,8 @@ nginx_crowd_lua_version=0.0.1
 sudo apt-get update
 sudo apt-get install -fy build-essential zlib1g-dev
 sudo apt-get install -fy git-core
+sudo apt-get install -fy cmake
+sudo apt-get install -fy luarocks 
 
 src=~/src
 build=/app/nginx
@@ -69,7 +71,7 @@ cd nginx-$nginx_version
 
 export LUAJIT_LIB=$lua_build/lib
 export LUAJIT_INC=$lua_build/include
-./configure --prefix=$build --with-pcre=$src/pcre-$pcre_version --with-http_ssl_module --add-module=$src/ngx_devel_kit-$ngx_devel_kit_version --add-module=$src/lua-nginx-module-$lua_nginx_version 
+./configure --prefix=$build --with-pcre=$src/pcre-$pcre_version --with-http_ssl_module --add-module=$src/ngx_devel_kit-$ngx_devel_kit_version --add-module=$src/lua-nginx-module-$lua_nginx_version --with-debug 
  
 make
 sudo make install
