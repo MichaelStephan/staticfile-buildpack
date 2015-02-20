@@ -71,7 +71,7 @@ cd nginx-$nginx_version
 
 export LUAJIT_LIB=$lua_build/lib
 export LUAJIT_INC=$lua_build/include
-./configure --prefix=$build --with-pcre=$src/pcre-$pcre_version --with-http_ssl_module --add-module=$src/ngx_devel_kit-$ngx_devel_kit_version --add-module=$src/lua-nginx-module-$lua_nginx_version --with-debug 
+./configure --prefix=$build --with-pcre=$src/pcre-$pcre_version --with-http_ssl_module --add-module=$src/ngx_devel_kit-$ngx_devel_kit_version --add-module=$src/lua-nginx-module-$lua_nginx_version --with-debug --with-http_stub_status_module 
  
 make
 sudo make install
